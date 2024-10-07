@@ -27,6 +27,7 @@ public class producto {
 	private Long id;
 	private String nombre;
 	private String descripcion;
+	private String marca;
 	private BigDecimal precio;
 	private int stock;
 	
