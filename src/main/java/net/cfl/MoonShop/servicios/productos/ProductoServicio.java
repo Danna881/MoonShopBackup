@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import net.cfl.MoonShop.excepciones.ProductoNoEncontradoEx;
-import net.cfl.MoonShop.modelo.producto;
+//import net.cfl.MoonShop.modelo.Producto;
 import net.cfl.MoonShop.repositorio.ProductoRepositorio;
 import net.cfl.MoonShop.dto.ImagenDto;
 import net.cfl.MoonShop.dto.ProductoDto;
