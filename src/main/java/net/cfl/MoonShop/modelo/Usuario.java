@@ -1,6 +1,5 @@
 package net.cfl.MoonShop.modelo;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -8,33 +7,34 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.cfl.MoonShop.modelo.Carrito;
+import net.cfl.MoonShop.modelo.Orden;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class producto {
+public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String nombre;
-	private String descripcion;
-	private String marca;
-	private BigDecimal precio;
-	private int stock;
+	private String usuarioNombre;
+	private String usuarioApellido;
+	private String email;
+	private String pwd;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name ="categoria_id")
-	private Categoria categoria;
+	@OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Carrito carrito;
 	
-	@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval= true)
-	private List<imagen>imagenes;
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Orden> ordenes;
 }
+
+

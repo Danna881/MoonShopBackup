@@ -2,6 +2,8 @@ package net.cfl.MoonShop.modelo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.cfl.MoonShop.modelo.Producto;
 
 @Getter
 @Setter
@@ -20,9 +23,14 @@ import lombok.Setter;
 public class Categoria {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	private String nombre;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "categoria")
-	private List<producto>producto;
+	private List<Producto> productos;
+	
+	public Categoria(String categoria) {
+		this.nombre = categoria;
+	}
 }

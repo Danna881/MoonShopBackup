@@ -1,0 +1,69 @@
+package net.cfl.MoonShop.servicios.carrito;
+
+import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import net.cfl.MoonShop.excepciones.RecursoNoEncontradoEx;
+import net.cfl.MoonShop.modelo.Carrito;
+import net.cfl.MoonShop.modelo.Usuario;
+import net.cfl.MoonShop.repositorio.CarritoItemRepositorio;
+import net.cfl.MoonShop.repositorio.CarritoRepositorio;
+import net.cfl.MoonShop.servicios.carrito.ICarritoServicio;
+
+@Service
+@RequiredArgsConstructor
+public class CarritoServicio implements ICarritoServicio{
+	private final CarritoRepositorio carritoRepositorio;
+	private final CarritoItemRepositorio carritoItemRepositorio;
+	private final AtomicLong generadorId = new AtomicLong(0);
+	@Override
+	public Carrito traeCarrito(Long id) {
+		Carrito carrito = carritoRepositorio.findById(id)
+				.orElseThrow(() -> new RecursoNoEncontradoEx("Carrito No Encontrado"));
+		BigDecimal montoTotal = carrito.getCostoTotal();
+		carrito.setCostoTotal(montoTotal);
+		return carritoRepositorio.save(carrito);
+	}
+
+	@Transactional //Permite la ejecucion en bloque de las consultas SQL
+	@Override
+	public void limpiaCarrito(Long id) {
+		Carrito carrito = traeCarrito(id);		
+		carritoItemRepositorio.deleteAllByCarritoId(id);
+		carrito.getCarritoItems().clear();
+		carritoRepositorio.deleteById(id);
+	}
+
+	@Override
+	public BigDecimal traePrecioTotal(Long id) {
+		Carrito carrito = traeCarrito(id);
+		return carrito.getCostoTotal();
+	}
+	
+	/* Metodo utilizado para generar ids de carritos sin auth
+	 * del usuario, solo lo aplicamos para probra la api
+	 * en esta etapa donde todavia no implementamos
+	 * la gestion de usuarios
+	 * */
+	@Override
+	public Carrito inicializaCarrito(Usuario usuario) {
+		return Optional.ofNullable(traeCarritoPorUsuarioId(usuario.getId()))
+				.orElseGet(() -> {
+					Carrito carrito = new Carrito();
+					carrito.setUsuario(usuario);
+					return carritoRepositorio.save(carrito);
+				});
+	}
+	
+	@Override
+	public Carrito traeCarritoPorUsuarioId(Long usuarioId) {
+		return carritoRepositorio.findByUsuarioId(usuarioId);
+	}
+	
+
+}
